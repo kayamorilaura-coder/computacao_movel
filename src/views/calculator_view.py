@@ -7,9 +7,7 @@ from controllers.calculator_controller import CalculatorController
 
 @ft.control
 class CalculatorApp(ft.Container):
-    def __init__(self):
-        super().__init__()
-
+    def init(self):
         self.controller = CalculatorController()
 
         self.expand = True
