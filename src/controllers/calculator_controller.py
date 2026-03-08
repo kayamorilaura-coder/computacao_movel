@@ -1,5 +1,5 @@
 import sympy as sp
-
+#arrumar o print
 
 class CalculatorController:
     def __init__(self): #tradutores para o print
@@ -25,16 +25,20 @@ class CalculatorController:
 
     def process_button(self, data, current_result, current_expression):
         data = self.button_codes.get(data, data)
+        if data in self.button_codes: 
+            data = self.button_codes[data]
+        print(f"Button clicked with data = {repr(data)}")
 
         result = str(current_result)
         expression_display = str(current_expression)
 
-        if result == "Error" and data != "AC":
+        if result == "Error" and data != "AC": 
             result = "0"
             expression_display = ""
             self.reset()
 
-        if data == "AC":
+#funções de operações
+        if data == "AC": 
             self.reset()
             return {
                 "result": "0",
@@ -59,23 +63,6 @@ class CalculatorController:
                 self.expression += result + data
 
             expression_display = self.expression
-            self.new_operand = True
-
-        elif data == "=":
-            final_expression = self.expression + result if self.expression else result
-            expression_display = final_expression + "="
-
-            try:
-                resultado = sp.sympify(final_expression).evalf()
-                result = str(self.format_scientific_result(resultado))
-                print(f'Resultado da conta: {resultado} e expressão: {expression_display}')
-                self.history_controller.validade(resultado, result)
-                self.reset(keep_result=resultado)
-            except Exception:
-                result = "Error"
-                self.reset()
-
-            self.expression = ""
             self.new_operand = True
 
         elif data == "%":
@@ -117,69 +104,144 @@ class CalculatorController:
             
 
         elif data == "log":
-            try:
-                x = float(result)
-                resultado = sp.log(x, 10).evalf()
-                result = str(self.format_scientific_result(resultado))
-                self.new_operand = True
-            except Exception:
-                result = "Error"
+            #try:
+            #    x = float(result)
+            #    resultado = sp.log(x, 10).evalf()
+            #    result = str(self.format_scientific_result(resultado))
+            #    self.new_operand = True
+            #except Exception:
+            #    result = "Error"
+            if self.expression == "":
+                self.expression = "log("
+            else:
+                self.expression += "log("
+            
+            expression_display = self.expression
+            result = "log("
+            self.open_parens += 1
+            self.new_operand = False
+
 
         elif data == "ln":
-            try:
-                x = float(result)
-                resultado = sp.log(x).evalf()
-                result = str(self.format_scientific_result(resultado))
-                self.new_operand = True
-            except Exception:
-                result = "Error"
+            #try:
+            #    x = float(result)
+            #    resultado = sp.log(x).evalf()
+            #    result = str(self.format_scientific_result(resultado))
+            #    self.new_operand = True
+            #except Exception:
+            #    result = "Error"
+            if self.expression == "":
+                self.expression = "ln("
+            else:
+                self.expression += "ln("
+            
+            expression_display = self.expression
+            result = "ln("
+            self.open_parens += 1
+            self.new_operand = False
 
         elif data == "sqrt":
-            try:
-                x = float(result)
-                if x < 0:
-                    result = "Error"
-                else:
-                    resultado = sp.sqrt(x).evalf()
-                    result = str(self.format_scientific_result(resultado))
-                    self.new_operand = True
-            except Exception:
-                result = "Error"
+            #try:
+            #    x = float(result)
+            #    if x < 0:
+            #        result = "Error"
+            #    else:
+            #        resultado = sp.sqrt(x).evalf()
+            #        result = str(self.format_scientific_result(resultado))
+            #        self.new_operand = True
+            #except Exception:
+            #    result = "Error"
+            if self.expression == "":
+                self.expression = "√"
+            else:
+                self.expression += "√"
+            
+            expression_display = self.expression
+            result = "√"
+            self.open_parens += 1
+            self.new_operand = False
+
 
         elif data == "cbrt":
-            try:
-                x = float(result)
-                resultado = sp.cbrt(x).evalf()
-                result = str(self.format_scientific_result(resultado))
-                self.new_operand = True
-            except Exception:
-                result = "Error"
+            #try:
+            #    x = float(result)
+            #    resultado = sp.cbrt(x).evalf()
+            #except Exception:
+            #    result = "Error"
+            #try:
+            #    x = float(result)
+            #    resultado = sp.cbrt(x).evalf()
+            #    result = str(self.format_scientific_result(resultado))
+            #    self.new_operand = True
+            #except Exception:
+            #    result = "Error"
+            if self.expression == "":
+                self.expression = "∛"
+            else:
+                self.expression += "∛"
+            
+            expression_display = self.expression
+            result = "∛"
+            self.open_parens += 1
+            self.new_operand = False
+            
 
         elif data == "!":
-            try:
-                x = float(result)
-                if x < 0:
-                    resultado = -sp.factorial(abs(int(x))).evalf()
-                else:
-                    resultado = sp.factorial(int(x)).evalf()
-                result = str(self.format_scientific_result(resultado))
-                self.new_operand = True
-            except Exception:
-                result = "Error"
+            #try:
+            #    x = float(result)
+            #    if x < 0:
+            #        resultado = -sp.factorial(abs(int(x))).evalf()
+            #    else:
+            #        resultado = sp.factorial(int(x)).evalf()
+            #    result = str(self.format_scientific_result(resultado))
+            #    self.new_operand = True
+            #except Exception:
+            #    result = "Error"
+            if self.expression == "":
+                self.expression = "(" + result + ")" + "!"
+            else:
+                self.expression += "(" + result + ")" + "!"
+            
+            expression_display = self.expression
+            result = "!"
+            self.new_operand = True
+
 
         elif data == "pi":
-            try:
-                result = str(self.format_scientific_result(sp.pi.evalf()))
-                self.new_operand = True
-            except Exception:
-                result = "Error"
+            #try:
+            #    result = str(self.format_scientific_result(sp.pi.evalf()))
+            #    self.new_operand = True
+            #except Exception:
+            #    result = "Error"
+            const = "pi" #chamar do sympy
+            if self.expression == "":
+                self.expression = const
+                result = const
+            else:
+                self.expression += const
+                result = const
+            
+            expression_display = self.expression
+            self.new_operand = True
+
 
         elif data == "e":
-            try:
-                result = str(self.format_scientific_result(sp.E.evalf()))
-                self.new_operand = True
-            except Exception:
-                result = "Error"
+            #try:
+            #    result = str(self.format_scientific_result(sp.E.evalf()))
+            #    self.new_operand = True
+            #except Exception:
+            #    result = "Error"
+            const = "E" #sympy usa E maiusculo para EULER
+            if self.expression == "":
+                self.expression = const
+                result = const
+            else:
+                self.expression += const
+                result = const
+            
+            expression_display = self.expression
+            self.new_operand = True
+
 
         elif data == "**":
             try:
@@ -191,21 +253,38 @@ class CalculatorController:
                 result = "Error"
 
         elif data == "()":
-            if self.open_parens == 0:
-                if result == "0" or self.new_operand:
-                    result = "("
-                else:
-                    result += "("
-                self.open_parens += 1
-            else:
-                result += ")"
-                self.open_parens -= 1
-            self.new_operand = False
+
+            # Fecha parênteses pendentes
+            final_expression = self.expression + result
+            final_expression += ")" * max(0, self.open_parens)
+            
+            expression_display = final_expression + "="
+            print(f"Calculando: {final_expression}")
+            
+            try:
+                # Substitui ln por log (SymPy usa log para natural)
+                sympy_expr = final_expression.replace("ln(", "log(")
+                
+                resultado = sp.sympify(sympy_expr).evalf()
+                result = self.format_scientific_result(resultado)
+                print(f"Resultado: {result}")
+                
+                self.reset(keep_result=resultado)
+                self.expression = str(resultado)  # Permite continuar calculando
+                self.new_operand = True
+                
+            except Exception as e:
+                result = "Error"
+                print(f"Erro: {e}")
+                self.reset()
+                self.expression = ""
+                self.new_operand = True
 
         return {
             "result": result,
             "expression": expression_display,
         }
+
 
     def format_number(self, num):
         if isinstance(num, (int, float)):
