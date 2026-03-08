@@ -19,6 +19,7 @@ class CalculatorController:
         }
 
         self.reset()
+        self.history_controller = HistoryController()
 
     def process_button(self, data, current_result, current_expression):
         data = self.button_codes.get(data, data)
@@ -65,6 +66,8 @@ class CalculatorController:
             try:
                 resultado = sp.sympify(final_expression).evalf()
                 result = str(self.format_scientific_result(resultado))
+                print(f'Resultado da conta: {resultado} e expressão: {expression_display}')
+                self.history_controller.validade(resultado, result)
                 self.reset(keep_result=resultado)
             except Exception:
                 result = "Error"
