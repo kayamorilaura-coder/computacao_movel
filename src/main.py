@@ -16,10 +16,13 @@ from views.history_view import HistoryView
 
 def main(page: ft.Page):
     page.title = "Calculadora" # Por defalt está na calculadora
-
+    page.theme_mode = ft.ThemeMode.LIGHT 
+    page.bgcolor = ft.Colors.WHITE
     async def ir_historico(e):
         await page.push_route("/history")
 
+    async def ir_calculadora(e):
+        await page.push_route("/")
     # ------------------------------------------------------------------
     # Função que devover a App bar visto que o flet irá 
     # reconstruir toda a página
@@ -28,11 +31,21 @@ def main(page: ft.Page):
     def build_appbar(): 
         return ft.AppBar(
             title=ft.Text("Calculadora"),
-            bgcolor=ft.Colors.BLUE_GREY_400,
+            #bgcolor=ft.Colors.BLUE_GREY_400,
             actions=[
                 ft.IconButton(ft.Icons.HISTORY, on_click=ir_historico),
             ],
         )
+    
+    def history_appbar():
+        return ft.AppBar(
+            title=ft.Text("Histórico"),
+            #bgcolor=ft.Colors.BLUE_GREY_400,
+            actions=[
+                ft.IconButton(ft.Icons.CALCULATE, on_click=ir_calculadora),
+            ],
+        )
+        
 
     def route_change(e):
         page.views.clear()
@@ -51,7 +64,17 @@ def main(page: ft.Page):
         )
 
         if page.route == "/history":
-            page.views.append(HistoryView())
+            page.views.append(
+                ft.View(
+                    route="/history",
+                    appbar=history_appbar(),
+                    controls=[
+                        ft.SafeArea(
+                            expand=True,
+                            content=HistoryView(),
+                        )
+                    ],
+            ))
 
         page.update()
         
