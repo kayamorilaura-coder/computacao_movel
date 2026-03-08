@@ -2,7 +2,7 @@ import sympy as sp
 
 
 class CalculatorController:
-    def __init__(self):
+    def __init__(self): #tradutores para o print
         self.button_codes = {
             "√": "sqrt",
             "∛": "cbrt",
@@ -16,10 +16,12 @@ class CalculatorController:
             "sin": sp.sin,
             "cos": sp.cos,
             "tan": sp.tan,
+            "log": sp.log,  # ln natural
+            "ln": lambda x: sp.log(x)/sp.log(10),  #log base 10 usando mudança de base  
         }
 
         self.reset()
-        self.history_controller = HistoryController()
+        #self.history_controller = HistoryController() ainda não tenho na minha branch
 
     def process_button(self, data, current_result, current_expression):
         data = self.button_codes.get(data, data)
@@ -94,14 +96,25 @@ class CalculatorController:
                 pass
 
         elif data in ("sin", "cos", "tan"):
-            try:
-                x = float(result)
-                x_rad = x * sp.pi / 180
-                resultado = self.func[data](x_rad).evalf()
-                result = str(self.format_scientific_result(resultado))
-                self.new_operand = True
-            except Exception:
-                result = "Error"
+            #try:
+            #    x = float(result)
+            #    x_rad = x * sp.pi / 180
+            #    resultado = self.func[data](x_rad).evalf()
+            #    result = str(self.format_scientific_result(resultado))
+            #    self.new_operand = True
+            #except Exception:
+            #    result = "Error"
+            func_name = data
+            if self.expression == "":
+                self.expression = func_name + "("
+            else:
+                self.expression += func_name + "("
+            
+            expression_display = self.expression
+            result = func_name + "("
+            self.open_parens += 1
+            self.new_operand = False
+            
 
         elif data == "log":
             try:
