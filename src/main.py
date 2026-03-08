@@ -4,6 +4,7 @@
 # dependencies = [
 #     "flet[all]",
 #     "sympy",
+#     "duckdb"
 # ]
 # ///
 
@@ -14,32 +15,22 @@ from views.history_view import HistoryView
 
 
 def main(page: ft.Page):
-    page.title = "Calculadora"
-
-    async def ir_calculadora(e):
-        await page.push_route("/")
+    page.title = "Calculadora" # Por defalt está na calculadora
 
     async def ir_historico(e):
         await page.push_route("/history")
 
-    def build_appbar():
+    # ------------------------------------------------------------------
+    # Função que devover a App bar visto que o flet irá 
+    # reconstruir toda a página
+    #-------------------------------------------------------------------
+    
+    def build_appbar(): 
         return ft.AppBar(
             title=ft.Text("Calculadora"),
             bgcolor=ft.Colors.BLUE_GREY_400,
             actions=[
-                ft.PopupMenuButton(
-                    items=[
-                        ft.PopupMenuItem(
-                            content=ft.Text("Calculadora"),
-                            on_click=ir_calculadora,
-                        ),
-                        ft.PopupMenuItem(),
-                        ft.PopupMenuItem(
-                            content=ft.Text("Histórico"),
-                            on_click=ir_historico,
-                        ),
-                    ]
-                )
+                ft.IconButton(ft.Icons.HISTORY, on_click=ir_historico),
             ],
         )
 
@@ -63,6 +54,7 @@ def main(page: ft.Page):
             page.views.append(HistoryView())
 
         page.update()
+        
 
     async def view_pop(e: ft.ViewPopEvent):
         if e.view is not None:
