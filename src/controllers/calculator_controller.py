@@ -1,4 +1,4 @@
-# CalculatorController - VERSAO FINAL FUNCIONAL
+# CalculatorController - VERSAO MVC & stateful 
 import sympy as sp
 from datetime import datetime
 
@@ -219,9 +219,9 @@ class CalculatorController:
             final_expression += self.current_number
         
         # Fecha parenteses pendentes
-        open_parens_parenss = final_expression.count("(")
+        open_parens = final_expression.count("(")
         closes = final_expression.count(")")
-        final_expression += ")" * (open_parenss - closes)
+        final_expression += ")" * (open_parens - closes)
         
         print(f"Calculando: {final_expression}")
         
