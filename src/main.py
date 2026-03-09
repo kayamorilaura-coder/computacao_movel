@@ -15,6 +15,7 @@ from views.history_view import HistoryView
 
 
 def main(page: ft.Page):
+    page.add(ft.Image(src=f"/images/loading-animation.gif"))
     page.title = "Calculadora" # Por defalt está na calculadora
     page.theme_mode = ft.ThemeMode.LIGHT 
     page.bgcolor = ft.Colors.WHITE
@@ -91,4 +92,4 @@ def main(page: ft.Page):
     route_change(None)
 
 
-ft.run(main)
+ft.run(main, assets_dir="assets", window_icon="assets/favicon.png")
