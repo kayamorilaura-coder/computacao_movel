@@ -15,8 +15,9 @@ class HistoryController:
         return self.db_connection.listar_historico()
         
 
-    def delete():
-        pass
+    def delete(self, id_:int):
+        self.db_connection.deletar_por_id(id_)
 
-    def update():
-        pass
+    def copy_row(self, row):
+        texto = row #f"ID: {row[0]} | Expressão: {row[1]} | Resultado: {row[2]} | Data: {row[3]}"
+        return texto

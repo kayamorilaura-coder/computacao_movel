@@ -18,12 +18,12 @@ def main(page: ft.Page):
     page.title = "Calculadora" # Por defalt está na calculadora
     page.theme_mode = ft.ThemeMode.LIGHT 
     page.bgcolor = ft.Colors.WHITE
-    async def ir_historico(e):
-        await page.push_route("/history")
+    def ir_historico(e):
+        page.go("/history")
 
-    async def ir_calculadora(e):
-        await page.push_route("/")
-    # ------------------------------------------------------------------
+    def ir_calculadora(e):
+        page.go("/")
+        # ------------------------------------------------------------------
     # Função que devover a App bar visto que o flet irá 
     # reconstruir toda a página
     #-------------------------------------------------------------------

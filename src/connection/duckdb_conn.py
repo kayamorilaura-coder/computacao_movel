@@ -88,7 +88,14 @@ class DatabaseCalculator:
         ).fetchall()
         conn.close()
         return rows
+    
+    def deletar_por_id(self, id_: int):
+        conn = self.connection()
+        conn.execute("DELETE FROM history WHERE id = ?;", (id_,))
+        conn.execute(f"COPY history TO '{PARQUET_FILE}' (FORMAT 'parquet');")
+        conn.close()
 
+ 
 
 
 
