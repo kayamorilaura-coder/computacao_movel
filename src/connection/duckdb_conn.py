@@ -94,6 +94,21 @@ class DatabaseCalculator:
         conn.execute("DELETE FROM history WHERE id = ?;", (id_,))
         conn.execute(f"COPY history TO '{PARQUET_FILE}' (FORMAT 'parquet');")
         conn.close()
+    
+    def sync_to_client(self):
+        if not self.page:
+            return
+        
+        try:
+            rows = self.listar_historico()  # Pega dados do Parquet
+            history = [{"id": r[0], "expression": r[1], "result": r[2], "created_at": str(r[3])} for r in rows]
+            
+            # Salva no Client Storage como JSON
+            self.page.client_storage.set("calc_history", json.dumps(history))
+            print("Sincronizado DuckDB → Client Storage")
+        except Exception as e:
+            print(f"Erro sync: {e}")
+
 
  
 

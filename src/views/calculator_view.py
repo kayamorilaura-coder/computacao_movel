@@ -9,7 +9,6 @@ from controllers.calculator_controller import CalculatorController
 class CalculatorApp(ft.Container):
     def init(self):
         self.controller = CalculatorController()
-
         self.expand = True
         self.bgcolor = ft.Colors.BLACK
         self.border_radius = ft.BorderRadius.all(20)

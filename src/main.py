@@ -17,6 +17,7 @@ from views.history_view import HistoryView
 def main(page: ft.Page):
     page.add(ft.Image(src=f"/images/loading-animation.gif"))
     page.title = "Calculadora" # Por defalt está na calculadora
+    page.window_icon = "assets/favicon.png"
     page.theme_mode = ft.ThemeMode.LIGHT 
     page.bgcolor = ft.Colors.WHITE
     def ir_historico(e):
@@ -92,4 +93,4 @@ def main(page: ft.Page):
     route_change(None)
 
 
-ft.run(main, assets_dir="assets", window_icon="assets/favicon.png")
+ft.run(main, assets_dir="assets")
