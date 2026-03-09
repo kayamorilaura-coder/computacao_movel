@@ -22,6 +22,7 @@ class KeyboardComponent(ft.Column):
                     ActionButton(content="%", on_click=on_click),
                     ActionButton(content="÷", on_click=on_click),
                     ActionButton(content="CE", on_click=on_click),
+                    ActionButton(content="⌫", on_click=on_click),
                 ],
             ),
             ft.Row(
