@@ -1,4 +1,4 @@
-# CalculatorController - VERSAO MVC & stateful 
+# CalculatorController - VERSAO FINAL FUNCIONAL
 import sympy as sp
 from datetime import datetime
 
@@ -12,56 +12,56 @@ class CalculatorController:
             "÷": "/",
             "^": "**",
         }
-        # Mapeamento das funções científicas do SymPy
+    #mapeamento das funções cientificas dentro da classe da calculadora
         self.func = {
             "sin": sp.sin,
             "cos": sp.cos,
             "tan": sp.tan,
             "log": sp.log,  # ln natural
-            "ln": lambda x: sp.log(x)/sp.log(10),  # log base 10
-        }
-        
+            "ln": lambda x: sp.log(x)/sp.log(10),  #log base 10 usando mudança de base  
+            }
         self.reset()
 
     def reset(self, keep_result=None):
-        #self.operator = "+" #operador pardrão para o próximo calculo, caso clique-se em "=" sem nada 
+        self.operator = "+" #operador padrão para o próximo cálculo, para evitar erros se o usuário clicar em "=" sem escolher um operador
+
         self.new_operand = True
         self.expression = ""          # Expressao acumulada
-        self.current_number = "0"     # Numero sendo digitado
+        self.current_number = "0"
+        self.open_parens= 0 #contador para controlar os parênteses abertos e fechados, garantindo que a expressão seja     # Numero sendo digitado
         self.last_result = None
         self.last_expression = ""
-        self.open_parens = 0 #contador para controlar os parenteses
         if keep_result is not None:
             self.operand1 = float(keep_result)
         else:
             self.operand1 = 0
 
-    def process_button(self, data): #Mapeia os simbolos visuais
+    def process_button(self, data):
         original_data = data
         if data in self.button_codes:
             data = self.button_codes[data]
         
         print(f"Button clicked with data = {repr(data)}")
 
-        # ERRO - Só permite AC
+        # ERRO
         if self.get_display() == "Error" and data != "AC":
             return {"result_display": "Error", "expression_display": self.expression}
 
-        # AC - Limpa tudo
+        # AC
         if data == "AC":
             self.reset()
             return {"result_display": "0", "expression_display": ""}
 
-        # CE  - limpa display atual
+        # CE
         elif data == "CE":
             self.current_number = "0"
             self.new_operand = True
             return {"result_display": "0", "expression_display": self.expression}
 
         # BACKSPACE - CORRIGIDO PARA APAGAR DA EXPRESSION TAMBEM
-        #elif data in ("⌫", "Backspace"):
+        #elif data == "⌫":   
 
-
+        
         # NUMEROS
         elif data in ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."):
             if self.current_number == "0" or self.new_operand:
@@ -93,13 +93,13 @@ class CalculatorController:
             return {"result_display": data, "expression_display": self.expression}
 
         # FUNCOES CIENTIFICAS - COM CONVERSAO GRAUS PARA RADIANOS
-        elif data in ("sin", "cos", "tan", "log", "ln", "sqrt", "cbrt"):
+        elif data in ("sin", "cos", "tan", "log", "ln"):
             # Se tem numero atual, adiciona ele primeiro
             if self.current_number != "0" and not self.new_operand:
                 # Converte numero para radianos se for funcao trigonométrica
                 if data in ("sin", "cos", "tan"):
                     # Converte: 45 graus -> 45 * pi / 180 radianos
-                    arg = x * sp.pi / 180
+                    arg = f"({self.current_number}*pi/180)"
                 else:
                     arg = self.current_number
                 
@@ -117,6 +117,22 @@ class CalculatorController:
             
             self.new_operand = False
             return {"result_display": data + "(", "expression_display": self.expression}
+        
+        #RAIZES 
+        elif data in ("sqrt", "cbrt"):
+            func_name = data
+            # Monta expression
+            if self.expression == "":
+                self.expression = func_name + "("
+            else:
+                self.expression += func_name + "("
+            
+            # Atualiza display
+            self.display_buffer = func_name + "("
+            self.open_parens += 1
+            self.new_operand = False
+            
+            return {"result_display": self.display_buffer, "expression_display": self.expression}
 
         # CONSTANTES
         elif data in ("pi", "e"):
@@ -155,16 +171,27 @@ class CalculatorController:
 
         # PARENTSES - CORRIGIDO!
         elif data == "()":
-            # Se expression vazia ou termina em operador/(, abre
+            # Se expressão vazia ou termina em operador/(, abre
             if self.expression == "" or self.expression[-1] in "+-*/(":
                 self.expression += "("
                 return {"result_display": "(", "expression_display": self.expression}
-            else:
-                # Senao, fecha
-                self.expression += ")"
-                return {"result_display": ")", "expression_display": self.expression}
 
-        # +/-
+            elif self.open_parens == 0:
+                # Abre
+                if self.result.value == "0" or self.new_operand:
+                    self.result.value = "("
+                else:
+                    self.result.value += "("
+                self.open_parens += 1
+
+            else:
+                # Fecha
+                self.result.value += ")"
+                self.open_parens -= 1
+
+            self.new_operand = False
+
+        #NEGATIVO/POSITIVO
         elif data == "+/-":
             try:
                 x = float(self.current_number)
@@ -219,9 +246,9 @@ class CalculatorController:
             final_expression += self.current_number
         
         # Fecha parenteses pendentes
-        open_parens = final_expression.count("(")
+        opens = final_expression.count("(")
         closes = final_expression.count(")")
-        final_expression += ")" * (open_parens - closes)
+        final_expression += ")" * (opens - closes)
         
         print(f"Calculando: {final_expression}")
         
