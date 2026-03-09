@@ -82,17 +82,10 @@ class HistoryView(ft.Column):
     # -----------------------
     # COPY
     # -----------------------
-    def _handle_copy(self, string_copy):
+    async def _handle_copy(self, string_copy: str):
+        await self.clipboard.set(string_copy)
         page = self.page   # ← forma correta em @ft.control
 
-        texto = string_copy #f"ID: {row["id"]} |" #{row[1]} = {row[2]}"
+        page.show_dialog(ft.SnackBar(f"Copiado para área de Transferencia: {string_copy}"))
 
-        self.clipboard.set(string_copy)
-
-        page.snack_bar = ft.SnackBar(
-            content=ft.Text(f"Copiado:\n{string_copy}"),
-            bgcolor=ft.Colors.GREEN_100,
-        )
-
-        page.snack_bar.open = True
         page.update()
